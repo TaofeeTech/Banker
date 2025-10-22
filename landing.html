@@ -1,8 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
 
-
-<!-- Mirrored from themes.pixelstrap.net/pwa/mpay/landing.html by HTTrack Website Copier/3.x [XR&CO'2014], Fri, 30 Aug 2024 12:51:03 GMT -->
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
@@ -25,7 +23,8 @@
   <!--Google font-->
   <link rel="preconnect" href="https://fonts.googleapis.com/" />
   <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Lato:wght@100;300;400;700;900&amp;display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Lato:wght@100;300;400;700;900&amp;display=swap"
+    rel="stylesheet" />
 
   <!-- iconsax css -->
   <link rel="stylesheet" type="text/css" href="assets/css/vendors/iconsax.css" />
@@ -39,6 +38,13 @@
 
   <!-- Theme css -->
   <link rel="stylesheet" id="change-link" type="text/css" href="assets/css/style.css" />
+   <script>
+        const userId = localStorage.getItem("u_id");
+        if (!userId) {
+            // if id is not found, redirect to login
+            window.location.href = "http://127.0.0.1:5500/signin.html";
+        }
+    </script>
 </head>
 
 <body>
@@ -144,7 +150,7 @@
             <img src="assets/images/svg/ellipse.svg" alt="ellipse" />
           </div>
 
-          <h1 class="mt-2 text-white">$ 1,06,786.65</h1>
+          <h1 class="mt-2 text-white" id="acct_bal">$</h1>
 
           <div class="amount-details">
             <div class="amount w-50 text-start">
@@ -197,7 +203,7 @@
             <h5 class="mt-2 text-center">Deposit</h5>
           </a>
         </li>
-       
+
       </ul>
     </div>
   </section>
@@ -333,11 +339,11 @@
         </a>
       </li>
 
-    
+
 
       <li></li>
 
-    
+
 
       <li>
         <a href="profile.html">
@@ -475,7 +481,7 @@
   <!-- paid modal end -->
 
   <!-- pwa install app popup start -->
-  
+
   <!-- pwa install app popup start -->
 
   <!-- swiper js -->
@@ -500,8 +506,67 @@
 
   <!-- script js -->
   <script src="assets/js/script.js"></script>
+
+  <script>
+
+    let AccountBalance = document.getElementById("acct_bal")
+
+    async function fetchUsersById(u_id) {
+      try {
+        // API endpoint
+        const url = "http://localhost/banker/api/users.php"; // your PHP file path
+
+        // Prepare the request body
+        const payload = {
+          table: "users",
+          where: `id = '${u_id}'`,
+        };
+
+        // Send POST request
+        const response = await fetch(url, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(payload),
+        });
+
+        // Parse the response
+        const result = await response.json();
+
+        const clientSelect = document.getElementById("cl");
+
+        // Clear existing options (except the default)
+        // clientSelect.innerHTML = `<option selected>Choose Client</option>`;
+
+        if (result.status === "success" && Array.isArray(result.data)) {
+          // Populate users info
+          console.log(result);
+
+          let user = result.data[0]
+          
+          AccountBalance.innerText += ' ' + user.acct_bal;
+      
+        } else {
+          
+
+
+        }
+
+      } catch (error) {
+        console.error("Fetch error:", error);
+        const clientSelect = document.getElementById("cl");
+        const opt = document.createElement("option");
+        opt.textContent = `Something went wrong: ${error.message}`;
+        opt.disabled = true;
+        clientSelect.appendChild(opt);
+      }
+    }
+
+    fetchUsersById(userId);
+
+  </script>
+
 </body>
 
-
-<!-- Mirrored from themes.pixelstrap.net/pwa/mpay/landing.html by HTTrack Website Copier/3.x [XR&CO'2014], Fri, 30 Aug 2024 12:53:53 GMT -->
 </html>

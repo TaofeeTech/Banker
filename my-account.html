@@ -1,8 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
 
-
-<!-- Mirrored from themes.pixelstrap.net/pwa/mpay/my-account.html by HTTrack Website Copier/3.x [XR&CO'2014], Fri, 30 Aug 2024 12:56:50 GMT -->
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
@@ -25,7 +23,8 @@
   <!--Google font-->
   <link rel="preconnect" href="https://fonts.googleapis.com/" />
   <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Lato:wght@100;300;400;700;900&amp;display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Lato:wght@100;300;400;700;900&amp;display=swap"
+    rel="stylesheet" />
 
   <!-- bootstrap css -->
   <link rel="stylesheet" id="rtl-link" type="text/css" href="assets/css/vendors/bootstrap.min.css" />
@@ -35,6 +34,13 @@
 
   <!-- Theme css -->
   <link rel="stylesheet" id="change-link" type="text/css" href="assets/css/style.css" />
+  <script>
+    const userId = localStorage.getItem("u_id");
+    if (!userId) {
+      // if id is not found, redirect to login
+      window.location.href = "http://127.0.0.1:5500/signin.html";
+    }
+  </script>
 </head>
 
 <body>
@@ -61,8 +67,8 @@
             <i class="camera" data-feather="camera"></i>
           </div>
         </div>
-        <h2>Survana Williams</h2>
-        <h5>+62 78459 25623</h5>
+        <h2 id="acct_name"></h2>
+        <h5 id="acct_phone"></h5>
       </div>
 
       <form class="auth-form pt-0 mt-3" target="_blank">
@@ -80,7 +86,7 @@
           </div>
         </div>
 
-        <a href="profile.html" class="btn theme-btn w-100">Update</a>
+        <a href="profile.html" class="btn theme-btn w-100" disabled>Update</a>
       </form>
     </div>
   </section>
@@ -95,8 +101,69 @@
 
   <!-- script js -->
   <script src="assets/js/script.js"></script>
+
+    <script>
+
+    let AccountName = document.getElementById("acct_name")
+    let PhoneNumber = document.getElementById("acct_phone")
+    let AccountEmail = document.getElementById("inputusername")
+    let Accountphone = document.getElementById("inputpin")
+
+    async function fetchUsersById(u_id) {
+      try {
+        // API endpoint
+        const url = "http://localhost/banker/api/users.php"; // your PHP file path
+
+        // Prepare the request body
+        const payload = {
+          table: "users",
+          where: `id = '${u_id}'`,
+        };
+
+        // Send POST request
+        const response = await fetch(url, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(payload),
+        });
+
+        // Parse the response
+        const result = await response.json();
+
+        if (result.status === "success" && Array.isArray(result.data)) {
+          // Populate users info
+          console.log(result);
+
+          let user = result.data[0]
+
+          AccountName.innerText += ' ' + user.name;
+          PhoneNumber.innerHTML = user.phone;
+          AccountEmail.value = user.email;
+          Accountphone.value = user.phone;
+
+        } else {
+
+
+
+        }
+
+      } catch (error) {
+        console.error("Fetch error:", error);
+        const clientSelect = document.getElementById("cl");
+        const opt = document.createElement("option");
+        opt.textContent = `Something went wrong: ${error.message}`;
+        opt.disabled = true;
+        clientSelect.appendChild(opt);
+      }
+    }
+
+    fetchUsersById(userId);
+
+  </script>
+
 </body>
 
 
-<!-- Mirrored from themes.pixelstrap.net/pwa/mpay/my-account.html by HTTrack Website Copier/3.x [XR&CO'2014], Fri, 30 Aug 2024 12:56:50 GMT -->
 </html>

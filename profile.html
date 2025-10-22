@@ -1,8 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
 
-
-<!-- Mirrored from themes.pixelstrap.net/pwa/mpay/profile.html by HTTrack Website Copier/3.x [XR&CO'2014], Fri, 30 Aug 2024 12:55:28 GMT -->
 <head>
   <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
   <meta http-equiv="X-UA-Compatible" content="IE=edge" />
@@ -25,7 +23,8 @@
   <!--Google font-->
   <link rel="preconnect" href="https://fonts.googleapis.com/" />
   <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Lato:wght@100;300;400;700;900&amp;display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Lato:wght@100;300;400;700;900&amp;display=swap"
+    rel="stylesheet" />
 
   <!-- bootstrap css -->
   <link rel="stylesheet" id="rtl-link" type="text/css" href="assets/css/vendors/bootstrap.min.css" />
@@ -35,18 +34,25 @@
 
   <!-- Theme css -->
   <link rel="stylesheet" id="change-link" type="text/css" href="assets/css/style.css" />
+  <script>
+    const userId = localStorage.getItem("u_id");
+    if (!userId) {
+      // if id is not found, redirect to login
+      window.location.href = "http://127.0.0.1:5500/signin.html";
+    }
+  </script>
 </head>
 
 <body>
   <!-- side bar start -->
-  
+
   <!-- side bar end -->
 
   <!-- header start -->
   <header class="section-t-space">
     <div class="custom-container">
       <div class="header-panel">
-       
+
         <h2>Profile</h2>
       </div>
     </div>
@@ -62,7 +68,7 @@
             <img class="img-fluid profile-pic" src="assets/images/person/p3.png" alt="p3" />
           </div>
         </div>
-        <h2>Survana Williams</h2>
+        <h2 id="acct_name"></h2>
       </div>
 
       <ul class="profile-list">
@@ -77,11 +83,11 @@
             </div>
           </a>
         </li>
-       
-       
-       
 
-    
+
+
+
+
         <li>
           <a href="signin.html" class="profile-box">
             <div class="profile-img">
@@ -120,11 +126,11 @@
         </a>
       </li>
 
-    
+
 
       <li></li>
 
-    
+
       <li class="active">
         <a href="profile.html">
           <div class="icon">
@@ -151,8 +157,65 @@
 
   <!-- script js -->
   <script src="assets/js/script.js"></script>
+
+
+  <script>
+
+    let AccountName = document.getElementById("acct_name")
+
+    async function fetchUsersById(u_id) {
+      try {
+        // API endpoint
+        const url = "http://localhost/banker/api/users.php"; // your PHP file path
+
+        // Prepare the request body
+        const payload = {
+          table: "users",
+          where: `id = '${u_id}'`,
+        };
+
+        // Send POST request
+        const response = await fetch(url, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(payload),
+        });
+
+        // Parse the response
+        const result = await response.json();
+
+        if (result.status === "success" && Array.isArray(result.data)) {
+          // Populate users info
+          console.log(result);
+
+          let user = result.data[0]
+
+          AccountName.innerText += ' ' + user.name;
+
+        } else {
+
+
+
+        }
+
+      } catch (error) {
+        console.error("Fetch error:", error);
+        const clientSelect = document.getElementById("cl");
+        const opt = document.createElement("option");
+        opt.textContent = `Something went wrong: ${error.message}`;
+        opt.disabled = true;
+        clientSelect.appendChild(opt);
+      }
+    }
+
+    fetchUsersById(userId);
+
+  </script>
+
+
 </body>
 
 
-<!-- Mirrored from themes.pixelstrap.net/pwa/mpay/profile.html by HTTrack Website Copier/3.x [XR&CO'2014], Fri, 30 Aug 2024 12:55:28 GMT -->
 </html>

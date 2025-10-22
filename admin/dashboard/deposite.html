@@ -1,4 +1,4 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en" data-bs-theme="auto">
 
 <head>
@@ -41,8 +41,7 @@
             background-color: #0000001a;
             border: solid rgba(0, 0, 0, 0.15);
             border-width: 1px 0;
-            box-shadow:
-                inset 0 0.5em 1.5em #0000001a,
+            box-shadow: inset 0 0.5em 1.5em #0000001a,
                 inset 0 0.125em 0.5em #00000026;
         }
 
@@ -306,7 +305,7 @@
                                 </a>
                             </li>
                             <li class="nav-item">
-                                <a class="nav-link d-flex align-items-center gap-2" href="#">
+                                <a class="nav-link d-flex align-items-center gap-2" href="add_user.html">
                                     <svg class="bi" aria-hidden="true">
                                         <use xlink:href="#plus-circle"></use>
                                     </svg>
@@ -354,72 +353,40 @@
             </div>
             <main class="col-md-9 ms-sm-auto col-lg-10 px-md-4">
 
-                <h2 class="pt-2">Add New User</h2>
-                <div class="container">
+                <h2 class="border-button">Deposit</h2>
 
-                    <div class="card px-3 py-3 mt-5">
+                <div class="card p-3  col-md-5">
 
-                        <h5 class="card-title">User Info <span><small class="text-info">(All Fields Are Required)</small></span></h5>
+                    <h5 class="card-title">Add deposite for your client</h5>
 
-                        <div class="err"></div>
+                    <div class="card-body">
 
-                        <div class="card-body">
+                        <form>
 
-                            <form>
+                            <div class="form-group mb-3">
+                                <label for="cl">Client</label>
+                                <select name="client" id="cl" class="form-control">
+                                    <option selected>Choose Client</option>
+                                </select>
+                            </div>
 
-                                <div class="form-group">
+                            <div class="form-group mb-3">
+                                <label for="amt">Amount</label>
+                                <input type="number" id="amt" name="amt" class="form-control"
+                                    placeholder="Enter amount">
+                            </div>
 
-                                    <label>Account Name</label>
-                                    <input type="text" class="form-control" id="name" placeholder="Account Name">
+                            <div class="d-grid gap-2 d-md-flex justify-content-md-start mt-3">
+                                <button class="btn btn-primary me-md-2" type="button" id="submitBtn">Submit</button>
+                            </div>
 
-                                </div>
-
-                                <div class="form-group mt-3">
-
-                                    <label>Account Balance</label>
-                                    <input type="text" class="form-control" id="acct_bal" placeholder="Account Balance">
-
-                                </div>
-
-                                <div class="form-group mt-3">
-
-                                    <label>Message <small>(optional)</small></label>
-                                    <input type="text" class="form-control" id="mssg" placeholder="Message">
-
-                                </div>
-
-                                <div class="form-group mt-3">
-
-                                    <label>Phone Number</label>
-                                    <input type="text" class="form-control" id="phone" placeholder="Phone Number">
-
-                                </div>
-
-                                <div class="form-group mt-3">
-
-                                    <label>Email Address</label>
-                                    <input type="email" class="form-control" id="email" placeholder="Email Address">
-
-                                </div>
-
-                                <div class="form-group mt-3">
-
-                                    <label>Location / Address</label>
-                                    <input type="text" class="form-control" id="location" placeholder="Location/Address">
-
-                                </div>
-
-                                <div class="d-grid gap-2 d-md-flex justify-content-md-end mt-3">
-                                    <button class="btn btn-primary me-md-2" type="button" id="submitBtn">Submit</button>
-                                </div>
-
-                            </form>
-
-                        </div>
+                        </form>
 
                     </div>
 
                 </div>
+
+
             </main>
         </div>
     </div>
@@ -429,12 +396,11 @@
         class="astro-vvvwv3sm"></script>
     <script src="dashboard.js" class="astro-vvvwv3sm"></script>
     <script>
+        let logoutBtn = document.getElementById("logout");
 
-        let logoutBtn = document.getElementById('logout');
-        let btn = document.getElementById('submitBtn');
+        let SubmitBtn = document.getElementById("submitBtn");
 
-        logoutBtn.addEventListener('click', () => {
-
+        logoutBtn.addEventListener("click", () => {
             localStorage.removeItem("id");
 
             localStorage.clear();
@@ -442,71 +408,120 @@
             alert("You are successfully logged out");
 
             window.location.href = "http://127.0.0.1:5500/admin/index.html";
+        });
 
-
-        })
-
-        btn.addEventListener("click", async (e) => {
-            e.preventDefault(); // stop form from submitting normally
-
-            // Collect input values
-            const name = document.getElementById("name").value.trim();
-            const email = document.getElementById("email").value.trim();
-            const acct_bal = document.getElementById("acct_bal").value.trim();
-            const mssg = document.getElementById("mssg").value.trim();
-            const phone = document.getElementById("phone").value.trim();
-            const location = document.getElementById("location").value.trim();
-
-            // Error placeholders
-            const Error = document.querySelector(".err");
-
-            // Reset previous errors
-            Error.innerText = "";
-
-            // Check for empty fields
-            if (!name || !email || !acct_bal || !phone || !location) {
-                Error.classList.add("alert", "alert-danger")
-                Error.innerText = "All fields are required.";
-                return;
-            }
-
-            // // Prepare data for backend
-            const registerData = {
-                type: "users",
-                name: name,
-                email: email,
-                acct_bal: acct_bal,
-                mssg: mssg ?? null,
-                phone: phone,
-                admin_id: userId,
-                location: location,
-            };
-
+        // Function to fetch all users based on admin_id
+        async function fetchUsersByAdmin(admin_id) {
             try {
-                // Send POST request to backend API
-                const response = await fetch("http://localhost/banker/api/register.php", {
+                // API endpoint
+                const url = "http://localhost/banker/api/users.php"; // your PHP file path
+
+                // Prepare the request body
+                const payload = {
+                    table: "users",
+                    where: `admin_id = '${admin_id}'`,
+                };
+
+                // Send POST request
+                const response = await fetch(url, {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json",
                     },
-                    body: JSON.stringify(registerData),
+                    body: JSON.stringify(payload),
                 });
 
-                // Parse backend response
+                // Parse the response
                 const result = await response.json();
 
-                if (response.ok && result.status === "success") {
-                    alert("User Created successful!");
-                    window.location.href = "index.html";
+                const clientSelect = document.getElementById("cl");
+
+                // Clear existing options (except the default)
+                clientSelect.innerHTML = `<option selected>Choose Client</option>`;
+
+                if (result.status === "success" && Array.isArray(result.data)) {
+                    if (result.data.length === 0) {
+                        const opt = document.createElement("option");
+                        opt.textContent = "No clients found 😕";
+                        opt.disabled = true;
+                        clientSelect.appendChild(opt);
+                        return;
+                    }
+
+                    // Populate users into the select
+                    result.data.forEach((user) => {
+                        const option = document.createElement("option");
+                        option.value = user.id; // user ID as value
+                        option.textContent = `${user.name} (${user.email})`; // display name + email
+                        clientSelect.appendChild(option);
+                    });
                 } else {
+                    const opt = document.createElement("option");
+                    opt.textContent = `Error: ${result.message || "Unable to load users"}`;
+                    opt.disabled = true;
+                    clientSelect.appendChild(opt);
+                }
+
+            } catch (error) {
+                console.error("Fetch error:", error);
+                const clientSelect = document.getElementById("cl");
+                const opt = document.createElement("option");
+                opt.textContent = `Something went wrong: ${error.message}`;
+                opt.disabled = true;
+                clientSelect.appendChild(opt);
+            }
+        }
+
+
+        async function DepositUser(){
+
+            let amt = document.getElementById("amt").value;
+            let cl_id = document.getElementById("cl").value;
+
+            try{
+
+                const url = "http://localhost/banker/api/deposite.php";
+
+                const payload = {
+                    table: "users",
+                    data: {
+                        "acct_bal" : amt,
+                    },
+                    where: `id = ${cl_id}`
+                };
+
+                const response = await fetch(url, {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify(payload),
+                })
+
+                const result = await response.json();
+
+                if(response.ok && result.status === "success"){
+                    alert("account bal updated");
+                    window.location.href = "index.html";
+                }else {
                     alert(`User Created successful!: ${result.message || "Unknown error"}`);
                 }
-            } catch (error) {
+
+            }catch (error) {
                 console.error(`An error occurred: ${error.message}`);
                 alert("Something went wrong. Please try again later.");
             }
-        });
 
+        }
+
+        SubmitBtn.addEventListener("click", (e) => {
+
+            e.preventDefault();
+            DepositUser();
+
+        })
+        
+        fetchUsersByAdmin(userId);
     </script>
 </body>
 
