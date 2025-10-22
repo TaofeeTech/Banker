@@ -493,4 +493,22 @@
   </script>
 </body>
 
+</html>     </tr>`;
+        }
+      } catch (error) {
+        console.error("Fetch error:", error);
+        const tableBody = document.querySelector("table tbody");
+        tableBody.innerHTML = `
+        <tr>
+          <td colspan="4" class="text-danger">
+            Something went wrong: ${error.message}
+          </td>
+        </tr>`;
+      }
+    }
+
+    fetchUsersByAdmin(userId);
+  </script>
+</body>
+
 </html>
