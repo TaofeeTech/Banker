@@ -317,7 +317,7 @@
                 </a>
               </li>
               <li class="nav-item">
-                <a class="nav-link d-flex align-items-center gap-2" href="#">
+                <a class="nav-link d-flex align-items-center gap-2" href="add_his.html">
                   <svg class="bi" aria-hidden="true">
                     <use xlink:href="#graph-up"></use>
                   </svg>
@@ -419,7 +419,7 @@
     async function fetchUsersByAdmin(admin_id) {
       try {
         // API endpoint
-        const url = "http://localhost/banker/api/users.php"; // your PHP file path
+        const url = "https://unch.ajowaakoko.com.ng/api/users.php"; // your PHP file path
 
         // Prepare the request body
         const payload = {
@@ -488,14 +488,7 @@
       }
     }
 
-    async function loadData() {
-      const users = await fetchUsersByAdmin(userId); // calling your function
-      console.log("Users:", users);
-    }
-
-    loadData();
-
-    // await fetchUsersByAdmin(userId);
+    fetchUsersByAdmin(userId);
   </script>
 </body>
 
